@@ -1,0 +1,94 @@
+plugins {
+    id 'java-library'       // Library functionality
+    id 'application'        // Enables 'gradle run' for main()
+}
+
+group = 'com.churkleung.ftc'
+version = '1.0.0'
+
+// Java 17 compatibility (matches FTC RobotCore requirements)
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+// Repositories
+repositories {
+    mavenCentral()
+    maven { url "https://frcmaven.wpi.edu/artifactory/release/" }
+}
+
+// Dependencies
+dependencies {
+    // JUnit 4 for testing
+    testImplementation 'junit:junit:4.13.2'
+
+    // Example utility library
+    implementation 'org.apache.commons:commons-lang3:3.18.0'
+
+    // Compile-only references; robot provides these at runtime
+    compileOnly files(
+            'sdk-aar/libs/RobotCore.jar',
+            'sdk-aar/libs/FtcCommon.jar',
+            'sdk-aar/libs/Hardware.jar'
+    )
+    compileOnly "edu.wpi.first.ntcore:ntcore-java:2025.3.1"
+}
+
+// -----------------------------
+// Library JAR task
+// -----------------------------
+jar {
+    archiveBaseName.set('ftc-utils')
+    archiveVersion.set(version)
+
+    // Include all compiled classes from main source set
+    from("$buildDir/classes/java/main") {
+        include '**/*.class'
+        exclude 'com/churkleung/ftc/application/**'  // exclude runner
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+
+    // Include resources
+    from(sourceSets.main.resources.srcDirs) {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+
+    manifest {
+        attributes(
+                'Implementation-Title': 'FTC Utils Library',
+                'Implementation-Version': version
+        )
+    }
+
+    doLast {
+        println "Built JAR: ${archiveFile.get().asFile.absolutePath}"
+    }
+}
+
+// -----------------------------
+// Application plugin for running main class
+// -----------------------------
+application {
+    mainClass.set('com.churkleung.ftc.UtilRunner')
+}
+
+// -----------------------------
+// Test task configuration
+// -----------------------------
+tasks.test {
+    useJUnit()
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
+}
+
+// -----------------------------
+// Java compile options
+// -----------------------------
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    options.release.set(17) // match toolchain
+}
