@@ -16,29 +16,35 @@ This library **does not depend on the Android SDK at runtime**; the robot provid
     - FtcCommon.jar (originally from [FtcCommon.aar](https://github.com/FIRST-Tech-Challenge/FtcRobotController/blob/master/FtcCommon/FtcCommon.aar))
     - Hardware.jar (originally from [Hardware.aar](https://github.com/FIRST-Tech-Challenge/FtcRobotController/blob/master/Hardware/Hardware.aar))
 
-These JARs were created by extracting the classes from the corresponding AARs. (unzip RobotCore-10.3.0.aar RobotCore.jar -d libs/RobotCore)
+These JARs were created by extracting the classes from the corresponding AARs.
+```bash
+unzip RobotCore-10.3.0.aar RobotCore.jar -d libs/RobotCore)
+```
 
 ### Build the Library
 Clone the repository and build the JAR:
-
-git clone <your-repo-url>
-cd FtcUtils/lib
+```bash
+git clone https://github.com/churkl/FtcUtils.git
+cd FtcUtils
 ./gradlew clean jar
+```
 
 The output JAR will be located at:
-
+```
 lib/build/libs/ftc-utils-1.0.0.jar
+```
 
 ### Running Utilities
 - If you want to run the main class for testing (UtilRunner):
-
+```bash
 ./gradlew run
+```
 
 ## Include in Robot Project
 1. Copy the JAR to your robot project, e.g., TeamCode/libs/ftc-utils-1.0.0.jar.
 2. Reference it in your robot project’s build.gradle:
-
+```gradle
 dependencies {
     implementation files('libs/ftc-utils-1.0.0.jar')
 }
-
+````
